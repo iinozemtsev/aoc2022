@@ -1,0 +1,4 @@
+(executables
+ (names day1)
+ (public_names day1)
+ (libraries aoc2022))
