@@ -85,7 +85,6 @@ let () = print_cargo part1
 let () = moves |> List.iter ~f:(make_move part1)
 let () = Printf.printf "\nFinal state:\n"
 let () = print_cargo part1
-
 let part2 = create_start ()
 let () = moves |> List.iter ~f:(make_super_move part2)
 let () = Printf.printf "\nFinal state Part 2:\n"
