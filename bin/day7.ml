@@ -110,7 +110,6 @@ let c = make_computer ();;
 List.iter input ~f:(fun cmd -> process_cmd c cmd);;
 compute_transitive_size c.root
 
-
 let all_dirs : dir Stack.t = Stack.create ();;
 
 c.root |> traverse (Stack.push all_dirs)
