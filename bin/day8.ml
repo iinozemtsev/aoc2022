@@ -28,7 +28,8 @@ let parse_ch (ch : char) : int = Char.to_int ch - Char.to_int '0'
 let in_bounds field (x, y) =
   x >= 0 && y >= 0 && x < field.width && y < field.height
 
-let visible_from_outside_towards (start : coord) (offset : coord) (field : field) : coord_set =
+let visible_from_outside_towards (start : coord) (offset : coord)
+    (field : field) : coord_set =
   let result = ref CoordSet.empty in
   let current = ref start in
   let max_height = ref (-1) in
@@ -95,7 +96,8 @@ let visible_from_outside (field : field) : coord_set =
   let result = ref CoordSet.empty in
   (* from top row down *)
   for x = 0 to field.width - 1 do
-    result := visible_from_outside_towards (x, 0) (0, 1) field |> CoordSet.union !result
+    result :=
+      visible_from_outside_towards (x, 0) (0, 1) field |> CoordSet.union !result
   done;
   (* from bottom row up *)
   for x = 0 to field.width - 1 do
@@ -105,12 +107,14 @@ let visible_from_outside (field : field) : coord_set =
   done;
   (* from left column right *)
   for y = 0 to field.height - 1 do
-    result := visible_from_outside_towards (0, y) (1, 0) field |> CoordSet.union !result
+    result :=
+      visible_from_outside_towards (0, y) (1, 0) field |> CoordSet.union !result
   done;
   (* from right column left *)
   for y = 0 to field.height - 1 do
     result :=
-      visible_from_outside_towards (field.width - 1, y) (-1, 0) field |> CoordSet.union !result
+      visible_from_outside_towards (field.width - 1, y) (-1, 0) field
+      |> CoordSet.union !result
   done;
 
   !result
@@ -155,17 +159,13 @@ let best_visible_from_score (field : field) ~should_print_field =
     done
   done;
   if should_print_field then
-(  visible_from_tree !best_pos field
-  |> to_visibility_field (field.width, field.height)
-  |> print_field |> Printf.printf "%s");
+    visible_from_tree !best_pos field
+    |> to_visibility_field (field.width, field.height)
+    |> print_field |> Printf.printf "%s";
   !best
 
 let field = In_channel.read_all "inputs/day8.txt" |> parse_field
-
 let visib = field |> visible_from_outside
-
-
-
 let () = visib |> CoordSet.length |> Printf.printf "Part1: %d\n"
 
 let () =
