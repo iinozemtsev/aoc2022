@@ -91,7 +91,7 @@ let part2 program =
     printf "\n"
   done;
 
-part1 program |> printf "Part1: %d\n";;
+  part1 program |> printf "Part1: %d\n"
 
 let sample =
   let open List in
