@@ -1,2 +1,4 @@
 (library
- (name aoc2022))
+ (name aoc2022)
+ (public_name aoc2022)
+ (libraries core))

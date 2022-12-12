@@ -1,20 +1,5 @@
 open Core
-
-module Coord = struct
-  type t = int * int
-
-  let compare (x1, y1) (x2, y2) =
-    match Int.compare x1 x2 with 0 -> Int.compare y1 y2 | c -> c
-
-  let t_of_sexp tuple = Tuple2.t_of_sexp Int.t_of_sexp Int.t_of_sexp tuple
-  let sexp_of_t tuple = Tuple2.sexp_of_t Int.sexp_of_t Int.sexp_of_t tuple
-  let ( + ) (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
-  let ( - ) (x1, y1) (x2, y2) = (x1 - x2, y1 - y2)
-end
-
-type coord = Coord.t
-
-module CoordSet = Core.Set.Make (Coord)
+open Aoc2022.Coords
 
 type snake = { head : coord; tail : coord }
 

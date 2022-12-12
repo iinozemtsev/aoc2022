@@ -5,7 +5,14 @@ open Scanf
 type operand = Old | Val of int
 type operation = Add of (operand * operand) | Mul of (operand * operand)
 type test = { modulo : int; when_true : int; when_false : int }
-type monkey = { id : int; items : int Queue.t; op : operation; test : test; mutable inspect_count : int }
+
+type monkey = {
+  id : int;
+  items : int Queue.t;
+  op : operation;
+  test : test;
+  mutable inspect_count : int;
+}
 
 let id x = x
 
@@ -98,8 +105,8 @@ let print_monkey m =
       printf "  Operation: new = %s\n" (operation_to_str m.op);
       printf "%s\n" (print_test m.test))
 
-let sample_monkeys = In_channel.read_all "inputs/day11_sample.txt" |> parse_monkeys;;
-
+let sample_monkeys =
+  In_channel.read_all "inputs/day11_sample.txt" |> parse_monkeys
 
 type monkeys = monkey array
 
@@ -111,7 +118,8 @@ let apply_operation ?(debug = true) item operation =
       let left = eval_operand x item in
       let right = eval_operand y item in
       let result = left + right in
-      if debug then printf "    Worry level increases by %d to %d.\n" right result;
+      if debug then
+        printf "    Worry level increases by %d to %d.\n" right result;
       result
   | Mul (x, y) ->
       let left = eval_operand x item in
@@ -121,7 +129,8 @@ let apply_operation ?(debug = true) item operation =
         printf "    Worry level is multiplied by %d to %d.\n" right result;
       result
 
-let turn ?(debug = true) ?(modulo = 0) ?(is_part1 = true) (monkeys : monkeys) (monkey : monkey) : unit =
+let turn ?(debug = true) ?(modulo = 0) ?(is_part1 = true) (monkeys : monkeys)
+    (monkey : monkey) : unit =
   if debug then printf "Monkey %d:\n" monkey.id;
   (* Monkey 0: *)
   while not (monkey.items |> Queue.is_empty) do
@@ -132,7 +141,7 @@ let turn ?(debug = true) ?(modulo = 0) ?(is_part1 = true) (monkeys : monkeys) (m
     (*   Monkey inspects an item with a worry level of 79. *)
     let updated = apply_operation ~debug item monkey.op in
     (*     Worry level is multiplied by 19 to 1501. *)
-    let divided = if is_part1 then  updated / 3 else updated in
+    let divided = if is_part1 then updated / 3 else updated in
     let final = if modulo = 0 then divided else divided mod modulo in
     if debug then
       printf
@@ -157,25 +166,50 @@ let turn ?(debug = true) ?(modulo = 0) ?(is_part1 = true) (monkeys : monkeys) (m
   done;
   ()
 
-let calc_modulo (m: monkeys) = m |> Array.fold ~init:1 ~f:(fun r e -> r * e.test.modulo)
+let calc_modulo (m : monkeys) =
+  m |> Array.fold ~init:1 ~f:(fun r e -> r * e.test.modulo)
 
 let mround ?(debug = true) ?(is_part1 = true) (m : monkeys) : unit =
   let modulo = calc_modulo m in
-  Array.iter m ~f:(fun i -> turn ~debug:debug ~modulo:modulo ~is_part1:is_part1 m i)
-;;
+  Array.iter m ~f:(fun i -> turn ~debug ~modulo ~is_part1 m i)
 
-let business (m: monkeys) = let sorted = m |> Array.map ~f:(fun m -> m.inspect_count) |> Array.sorted_copy ~compare:Int.descending in sorted.(0) * sorted.(1);;
+let business (m : monkeys) =
+  let sorted =
+    m
+    |> Array.map ~f:(fun m -> m.inspect_count)
+    |> Array.sorted_copy ~compare:Int.descending
+  in
+  sorted.(0) * sorted.(1)
+;;
 
 mround ~debug:true sample_monkeys
 
-let monkeys  = In_channel.read_all "inputs/day11.txt" |> parse_monkeys;;
+let monkeys = In_channel.read_all "inputs/day11.txt" |> parse_monkeys;;
+
 print_monkey monkeys.(0);;
- monkeys |> calc_modulo |> printf "Modulo: %d\n";;
-for _ = 0 to 19 do  mround ~debug:false monkeys done;;
-monkeys |> Array.iter ~f:(fun m -> printf "Monkey %d: %d\n" m.id m.inspect_count);;
+monkeys |> calc_modulo |> printf "Modulo: %d\n";;
+
+for _ = 0 to 19 do
+  mround ~debug:false monkeys
+done
+;;
+
+monkeys
+|> Array.iter ~f:(fun m -> printf "Monkey %d: %d\n" m.id m.inspect_count)
+;;
+
 monkeys |> business |> printf "Part1: %d\n";;
-printf "\n\nPart 2\n";;
-let monkeys2  = In_channel.read_all "inputs/day11.txt" |> parse_monkeys;;
-for _ = 0 to 9999 do  mround ~debug:false ~is_part1:false monkeys2 done;;
-monkeys2 |> Array.iter ~f:(fun m -> printf "Monkey %d: %d\n" m.id m.inspect_count);;
-monkeys2 |> business |> printf "Part2: %d\n";;
+printf "\n\nPart 2\n"
+
+let monkeys2 = In_channel.read_all "inputs/day11.txt" |> parse_monkeys;;
+
+for _ = 0 to 9999 do
+  mround ~debug:false ~is_part1:false monkeys2
+done
+;;
+
+monkeys2
+|> Array.iter ~f:(fun m -> printf "Monkey %d: %d\n" m.id m.inspect_count)
+;;
+
+monkeys2 |> business |> printf "Part2: %d\n"
